@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fingerprint Authentication</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+  button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0062cc;
+}
+</style>
+</head>
+<body>
+  <button id="authenticate-btn">Authenticate with Fingerprint</button>
+  <script >const authenticateBtn = document.getElementById('authenticate-btn');
+
+authenticateBtn.addEventListener('click', () => {
+  // Check if the browser supports the Web Authentication API
+  if (typeof PublicKeyCredential === 'undefined') {
+    console.error('Web Authentication API is not supported in this browser.');
+    return;
+  }
+  
+  // Create a new PublicKeyCredentialRequestOptions object
+  const options = {
+    challenge: new Uint8Array(32),
+    allowCredentials: [{
+      type: 'public-key',
+      id: Uint8Array.from(atob('base64-encoded-credential-id'), c => c.charCodeAt(0)),
+      transports: ['usb', 'nfc', 'ble'],
+    }],
+    userVerification: 'required',
+  };
+  
+  // Call the navigator.credentials.get() method to initiate the authentication process
+  navigator.credentials.get({ publicKey: options }).then((credential) => {
+    // Do something with the credential returned by the Web Authentication API
+    console.log(credential);
+  }).catch((err) => {
+    // Handle errors that may occur during the authentication process
+    console.error(err);
+  });
+});
+</script>
+</body>
+</html>
